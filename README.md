@@ -1,6 +1,81 @@
 
 Started by adding Bootstrap. As simple as `npm install --save bootstrap`
-And then add it to `angular-cli.json` as a global stylesheet.
+And then add it to `angular-cli.json` as a global stylesheet with a path originating from the index.html.
+
+Once that is done, added the components using the CLI.
+The directory structure is:
+
+app
+- app.component.ts
+- header
+- shopping-list
+  - shopping-list-edit
+- recipe-book
+  - recipe-list
+    - recipe-item
+  - recipe-detail
+
+Followed by that, we added each component to their repsective parent component's markup and then added Bootstrap navbar markup to the header component.
+
+##### Models
+Then we are adding a structure to the recipe using a model.
+Model is a blueprint for an object we create.
+
+We then add a data structure of our model and add a constructor to it
+so that we can instantiate it using the new keyword while passing arguments to it
+
+Constructor, as a reminder is a built in function each class has
+that will be executed as soon as we create an instance of that class.
+Inside that constructor we have to assign the arguments that we recieved to the properties of the object/class.
+
+Example of the filled model:
+```ts
+export class Recipe{
+  public name: string; //are publicly accessible
+  public description: string;
+  public imagePath: string;
+
+  constructor(name: string, description: string, imagePath: string){
+    this.name = name;
+    this.description = desc;
+    this.imagePath = imagePath;
+  }
+}
+```
+The other way of structuring model is:
+```ts
+export class Ingredient {
+  constructor(public name: string,public amount: number){  }
+}
+//assigns the name to this.name automatically 
+```
+
+Once that is done, we import the model and we specify the datatype of our recipe array to this model we created. Hence, in recipe-list.component, we write:
+```ts
+import { Recipe } from '../recipe.model';
+//...
+export class RecipeListComponent implements OnInit {
+recipes: Recipe[] = [
+  new Recipe('Name of the Recipe','description of the recipe','https://unsplash.it/500/300/?random'),
+  new Recipe('Second Recipe','description Second recipe','https://unsplash.it/500/300/?random')
+];//datatype as recipe and calling a constructor.
+};
+```
+Where we are using the constructor to create an object with its params as properties.
+
+Once we create the model, we can now access this data, in our markup of this component.
+```html
+<a href="#" *ngFor="let recipe of recipes">
+    <h4 class="">{{recipe.name}}</h4>
+    <p class="">
+      {{recipe.description}}
+    </p>
+    <img src="{{recipe.imagePath}}" alt="{{recipe.name}}" class="" style="max-height: 50px; ">
+    <!-- OR -->
+      <img [src]="recipe.imagePath" alt="{{recipe.name}}" class="" style="max-height: 50px; ">
+</a>
+```
+
 
 
 
