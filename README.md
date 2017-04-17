@@ -17,7 +17,7 @@ app
 
 Followed by that, we added each component to their repsective parent component's markup and then added Bootstrap navbar markup to the header component.
 
-##### Models
+### Models
 Then we are adding a structure to the recipe using a model.
 Model is a blueprint for an object we create.
 
@@ -47,7 +47,7 @@ The other way of structuring model is:
 export class Ingredient {
   constructor(public name: string,public amount: number){  }
 }
-//assigns the name to this.name automatically 
+//assigns the name to this.name automatically
 ```
 
 Once that is done, we import the model and we specify the datatype of our recipe array to this model we created. Hence, in recipe-list.component, we write:
@@ -75,8 +75,85 @@ Once we create the model, we can now access this data, in our markup of this com
       <img [src]="recipe.imagePath" alt="{{recipe.name}}" class="" style="max-height: 50px; ">
 </a>
 ```
+### Routes
+We start with adding the router module to our  `app.module.ts`.
+`import { Routes, RouterModule } from '@angular/router';` goes somewhere in the top of app.module. Followed by a constant defined in the same file, where we declare our routes. This constant is an array.
 
+Constant:
+```ts
+const appRoutes: Routes = [
+  { path: 'portfolio', component: PortfolioComponent}
+]
+```
+Where the `path:'portfolio'` is the URL stub of portfolio and component is the component that will be loaded.
 
+We also need to import the RouterModule inside our imports. Looks like this:
+```ts
+imports: [
+  BrowserModule,
+  FormsModule,
+  HttpModule,
+  RouterModule.forRoot(appRoutes),
+  Angular2FontAwesomeModule
+],
+```
+Note that we have to register our constant of routes inside the forRoot function for router module.
+
+Then wherever we want out routed components to be displayed, we add `<router-outlet></router-outlet>`. Ng will then render the stuff there.
+
+Now to hook the links up to the routes, we get rid of their `href` attribute, since href reloads the entire app again. Replace the href with `routerLink`. For eg:
+```html
+<a routerLink="/resume" class="top_link active_top_link" id="showResume">Resume</a>
+<a [routerLink]="['/portfolio']" class="top_link" id="showProjects">Portfolio</a>
+```
+The first kid of routerLink is basic, while the second is the attribute type. The attribute type takes an array as an object while each object in that arrat is the URL stub we want to add. for example: `[routerLink]="['/portfolio','specific']"` will lead to `/portfolio/something`.
+
+In that same markup, adding `routerLinkActive = 'active'` will add the 'active' class whenever that link is active. We can also add options to the routerLinkActive, stating whether it should match the link exactly as it is, or any substring will do. Default is any substring.
+```html
+<a routerLinkActive="active_top_link" routerLinkActiveOptions="{exact : true}"
+[routerLink]="['/portfolio']" class="top_link"
+id="showProjects">Portfolio</a>
+```
+
+##### Navigating routes programmatically.
+All we do is add the router module to our component. We then pass it to the constructor and then in our method, call this.router.navigate. For exmple:
+```ts
+import { Router } from '@angular/router';
+//....
+constructor(private router: Router) { }
+//...
+onEventHappen(){
+  this.router.navigate(['/path'])
+}
+```
+##### Adding nested (children) routes
+Nested routes are meant to be defined the following way in `app.module.ts` again.
+```ts
+{ path: 'portfolio', component: PortfolioComponent, children: [
+  { path: 'circleframe', component: CircleframeComponent },
+  { path: 'sharpenerinc', component: SharpenerincComponent }
+]}
+```
+In the markup, the links need to be defined using the directives and arrays of URL slug.
+For eg:
+```html
+<a [routerLink]="['/portfolio','circleframe']">CircleframeComponent Production</a>
+<a [routerLink]="['/portfolio','sharpenerinc']">Sharpenerinc</a>
+```
+
+### Deployment
+###### Deployment steps to keep in mind
+- Build your app for production
+- Consider Ahead of Time [AoT] Compilation
+- Set the correct base element
+- Make sure the server always returns the index.html file
+
+Make sure, in your index.html you add `<base href="/">` if you're deploying your website on its own domain. If it is on a subdomain or a directory, then we add `<base href="/that_directory">`.
+
+Finally, to build:
+`ng build --prod --aot`
+
+Which will create a `dist` directory that can be directly uploaded on the server.
 
 
 
